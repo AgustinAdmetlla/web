@@ -9,4 +9,121 @@ y que va a contener la informacion de nuestro poyecto
     En la consola ejecutar:
   python manage.py runserver
 
+
+* AGREGAR APPs/ FUNCIONALIDAD:
+    Dentro del directorio 'core' se encuentra el modulo 'settings.py' donde se
+debe establecer e indicar en 'INSTALLED_APPS' las nuevas funcionalidades que
+debe reconocer Django:
+    En este caso se agrega la app 'core':
+
+    INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'core',
+]
+
+
+* CREACION USUARIO ADMINISTRADOR:
+    En la consola de python, ejecutar el comando:
+  python manage.py createsuperuser
+
+
+* REDIRECCION A TEMPLATES:
+    Se debe crear el directorio 'templates' y tener configurado el archivo 
+'settings.py' de 'core'. Dentro del atributo TEMPLATES modifico:
+    'DIRS': [os.path.join(BASE_DIR, 'templates')]
+
+    Quedando:
+    TEMPLATES = [
+        {
+            'BACKEND': 'django.template.backends.django.DjangoTemplates',
+            'DIRS': [os.path.join(BASE_DIR, 'templates')],
+            'APP_DIRS': True,
+            'OPTIONS': {
+                'context_processors': [
+                    'django.template.context_processors.debug',
+                    'django.template.context_processors.request',
+                    'django.contrib.auth.context_processors.auth',
+                    'django.contrib.messages.context_processors.messages',
+                ],
+            },
+        },
+    ]
+
+    Luego se debe agregar el path de la url 'index' a las urls que estan en el
+modulo 'urls.py'.
+    urlpatterns = [
+        path('admin/', admin.site.urls),
+        path('', HomeView.as_view(), name='home')
+    ]
+
+
+
+#########################################################################
+#                                                                       #
+#                               SEGURIDAD                               #
+#                                                                       #
+#########################################################################
+
+* PROTEGER VARIABLES DE AMBIENTE:
+
+    En el directorio 'core' se crea un nuevo archivo '.env' en el cual se 
+escribiran todas las contraseñas y datos sensibles en 'settings'.
+    Se debe instalar un nuevo paquete 'django-environ'.
+
+    Una vez instalado todo, dentro del modulo 'settings' se debe:
+  1. import environ
+  2. Crear una variable para instanciar variables:
+    env = environ.Env()
+  3. crear un lector de variables para 'env'
+    environ.Env.read_env()
+
+    Seguido esto, ya se puede empezar a indicar que cosas se quieren proteger:
+  1. 
+    SECRET_KEY = 'django-insecure-3%!o!gph1d48=dpto#xj(^u7wwq=t95f9pbtf7%(31w0x$-lyf'
   
+  2. se copia en el archivo '.env'
+  3. se modifica:
+    SECRET_KEY = os.environ.get('SECRET_KEY') 
+
+    Lo mismo se hace con DEBUG.
+
+
+#########################################################################
+#                                                                       #
+#                         CREACION APP BLOG                             #
+#                                                                       #
+######################################################################### 
+    Para crear la app nueva, se debe ejecutar el comando:
+  python manage.py startapp blog
+    
+    'blog' es mi nueva app
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
