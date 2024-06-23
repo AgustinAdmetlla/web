@@ -101,7 +101,58 @@ escribiran todas las contraseñas y datos sensibles en 'settings'.
     Para crear la app nueva, se debe ejecutar el comando:
   python manage.py startapp blog
     
-    'blog' es mi nueva app
+    'blog' es mi nueva app. Blog contendra toda la logica de funcionamiento.
+    Se debe actualizar las app con las que se va a manejar Django, para esto
+tengo que actualizar el modulo 'settings' de 'core':
+    Debo agregar 'blog' a la lista de apps:
+  INSTALLED_APPS = [
+      'django.contrib.admin',
+      'django.contrib.auth',
+      'django.contrib.contenttypes',
+      'django.contrib.sessions',
+      'django.contrib.messages',
+      'django.contrib.staticfiles',
+      'core',
+      'blog',
+  ]
+
+    Tambien se debe actualizar en 'urls' de 'core' y las 'urls' de 'blog'.
+  1. agregar path a las 'urls.py' de 'core':
+      path('blog', include('rutaApp.modulo', namespace='llamadaATemplate'))
+  
+  2. agregar 'urls.py' a 'blog':
+      Todo archivo url debe ser dclarado con: 'url_patterns=[]' para acceder 
+    a todas las vistas de 'blog'
+
+    Ahora se deben crear las vistas de 'blog' donde se van a enlistar todos 
+los POST que existen:
+
+- 'views.py' de 'blog':
+  from django.shortcuts import render
+  from django.views.generic import View
+
+
+  # Create your views here.
+  class BlogListView(View):
+      def get(self, request, *args, **kwargs):
+          context = {
+              
+          }
+          return render(request, 'blog_list.html', context)
+
+    Una vez creado el modulo 'views' se debe agregar a la lista de urls
+de 'blog':
+  urlpatterns = [
+      path('', BlogListView.as_view(), name='home')
+  ]
+
+    En el html 'index' se agregara la url para dirigirnos a la view de blog.
+  hola, visita mi blog <a href="{% url "blog:home" %}"> Blog aqui</a>
+
+  href="{% url "blog:home" %}" -> url "nameSpaceOrigen:vistaAMostrar"
+    El nameSpace origen, es el que se encuentra en la ruta path de 'urls' de
+  'core', quien a su vez, esta redirigido a las 'urls' de 'blog' que contiene
+  una vista llamada 'home'
 
 
 
