@@ -1,0 +1,12 @@
+* CREACION ENTORNO DJANGO:
+    En la terminal ejecutar comando:
+  django-admin startproject core .
+    
+    core -> nomenclatura que se le da a la primera app que se va a crear
+y que va a contener la informacion de nuestro poyecto
+
+* EJECUTAR SERVIDOR DJANGO:
+    En la consola ejecutar:
+  python manage.py runserver
+
+  
