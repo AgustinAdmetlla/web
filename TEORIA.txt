@@ -210,6 +210,50 @@ bd se modifica el modulo 'models' para que se guarden segun el titulo:
     Para poder interactuar entre los modelos y las vistas hay que crear un 
 nuevo modulo llamado 'forms.py' que va a interactuar con los metodos, en este
 caso el Post.
+    Una vez creado el modulo 'forms.py' se busca traer los modelos que se 
+quieren manipular. Se empieza con el modelo Post.
+
+- 'forms.py' de blog:
+  from django import forms
+  from .models import Post
+
+
+  class PostCreateForm(form.ModelForm):
+      class meta:
+          # se especifica el modelo que se quiere manipular para este formulario
+          model = Post
+
+          # indico los campos que quiero mostrar
+          # son los declarados en 'blog/models.py'
+          fields = ('title', 'content')
+
+    Una vez declarado el modelo de creacion de formulario, tengo que crear la
+vista para dicho modelo. Para eso trabajo sobre modulo 'views.py' de blog.
+    Se crea la clase del modelo que sera la plantilla de la vista.
+
+- 'views.py' de blog:
+  class BlogCreateView(View):
+      def get(self, request, *args, **kwargs):
+          context = {
+
+          }
+          return render(request, 'blog_create.html', context)
+      
+      def post(self, request, *args, **kwargs):
+          context = {
+              
+          }
+          return render(request, 'blog_create.html', context)
+
+    Terminado de crear el modelo de la vista, hay que agregar la ruta al path
+de las urls del modulo 'urls.py' de blog. En el que se crea el endpoint create 
+que hereda de /blog/create.
+
+
+
+
+
+
 
 
 
