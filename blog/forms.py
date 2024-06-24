@@ -2,8 +2,8 @@ from django import forms
 from .models import Post
 
 
-class PostCreateForm(form.ModelForm):
-    class meta:
+class PostCreateForm(forms.ModelForm):
+    class Meta:
         # se especifica el modelo que se quiere manipular para este formulario
         model = Post
 

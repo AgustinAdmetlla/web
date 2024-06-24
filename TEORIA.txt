@@ -149,7 +149,7 @@ de 'blog':
     En el html 'index' se agregara la url para dirigirnos a la view de blog.
   hola, visita mi blog <a href="{% url "blog:home" %}"> Blog aqui</a>
 
-  href="{% url "blog:home" %}" -> url "nameSpaceOrigen:vistaAMostrar"
+  href="{% url "blog:home" %}" -> url "nombAppSegunUrls:vistaAMostrar"
     El nameSpace origen, es el que se encuentra en la ruta path de 'urls' de
   'core', quien a su vez, esta redirigido a las 'urls' de 'blog' que contiene
   una vista llamada 'home'
@@ -202,6 +202,7 @@ bd se modifica el modulo 'models' para que se guarden segun el titulo:
 #                                                                       #
 #                         CREACION de MODELOS                           #
 #                                                                       #
+#                   models -> forms -> views -> url                     #
 ######################################################################### 
 
     Se trabajara con fomrularios. Se busca crear modelos a traves de la vista
@@ -248,6 +249,16 @@ vista para dicho modelo. Para eso trabajo sobre modulo 'views.py' de blog.
     Terminado de crear el modelo de la vista, hay que agregar la ruta al path
 de las urls del modulo 'urls.py' de blog. En el que se crea el endpoint create 
 que hereda de /blog/create.
+
+- 'urls.py' de blog:
+  urlpatterns = [
+      path('', BlogListView.as_view(), name='home'),
+      path('create/', BlogCreateView.as_view(), name="create")
+  ]
+
+    Ahora hay que crear la conexion entre la ruta al modelo que crea el 
+formulario y la vista. Esto se realiza desde la plantilla 'blog_lista.html'
+    Hay que agregar el formulario al modelo que crea la vista de 'create'.
 
 
 
