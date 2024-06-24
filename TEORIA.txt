@@ -157,11 +157,59 @@ de 'blog':
 
 
 
+#########################################################################
+#                                                                       #
+#                         MODELOS VISTA ADMIN                           #
+#                                                                       #
+######################################################################### 
+
+    SON LOS QUE NOS PERMITE INTERACTUAR CON LA BASE DE DATOS. ES LA INFORMACION 
+    DE LA BASE DE DATOS.
+   Se empieza trabajando con el modulo 'models.py' de 'blog' creando la clase:
+  
+  Class Post(models.Model):
+    title = models.CharField(max_length=256)
+    content = models.TextField()
+
+    Las migraciones son las modificaciones que se realizan al modulo 
+'models.py'
+    Se procede a migrar informacion. Se limpia la base de datos de migraciones
+que hay en Blog. En la consola se ejecuta:
+  1. python manage.py makemigrations blog
+  2. python manage.py migrate
+    
+    Una vez realizada la migracion, ya se puede crear POST.
+    En 'blog' se trabaja con el modulo 'admin' para crear las vistas y 
+registrar:
+
+- 'admin.py':
+  from django.contrib import admin
+  from .models import Post
+
+  admin.site.register(Post)
 
 
+  Se sigue cargando datos desde el admin web.
+  Para mejorar la forma en que se visualizan los datos que se almacenan en la
+bd se modifica el modulo 'models' para que se guarden segun el titulo:
+
+- 'models.py' blog:
+  def __str__(self):
+      return self.title
 
 
+#########################################################################
+#                                                                       #
+#                         CREACION de MODELOS                           #
+#                                                                       #
+######################################################################### 
 
+    Se trabajara con fomrularios. Se busca crear modelos a traves de la vista
+    Hay que crear un articulo de la bd.
+    
+    Para poder interactuar entre los modelos y las vistas hay que crear un 
+nuevo modulo llamado 'forms.py' que va a interactuar con los metodos, en este
+caso el Post.
 
 
 
