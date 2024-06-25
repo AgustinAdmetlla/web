@@ -365,6 +365,36 @@ Se trabaja sobre el template 'blog_list':
 #########################################################################
 
 
+#########################################################################
+#                                                                       #
+#                              ESTILOS                                  #
+#                                                                       #
+#########################################################################
+
+    Se trabaja con la libreria 'tailwind'. Se sigue la guia de instalacion de
+pipy.
+    - 1ro: se debe agregar 'railwind' al 'settings' raiz que es de 'core':
+  INSTALLED_APPS = [
+    # other Django apps
+    'tailwind',
+  ]
+
+    - 2do: se crea app compatible entre Django y Tailwind:
+  python manage.py tailwind init
+
+    - 3ro: Se debe instalar en el modulo raiz 'settings' de 'core':
+  INSTALLED_APPS = [
+    # other Django apps
+    'tailwind',
+    'theme'
+  ]
+
+  - [...].
+
+    Terminados todos los pasos, tengo que trabajar sobre el template 'index'.
+    Se debe ejecutar 2 ventanas de comandos, una para 'tailwind' y la otra 
+para 'Django'
+
 
 
 
