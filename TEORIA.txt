@@ -101,7 +101,400 @@ escribiran todas las contraseñas y datos sensibles en 'settings'.
     Para crear la app nueva, se debe ejecutar el comando:
   python manage.py startapp blog
     
-    'blog' es mi nueva app
+    'blog' es mi nueva app. Blog contendra toda la logica de funcionamiento.
+    Se debe actualizar las app con las que se va a manejar Django, para esto
+tengo que actualizar el modulo 'settings' de 'core':
+    Debo agregar 'blog' a la lista de apps:
+  INSTALLED_APPS = [
+      'django.contrib.admin',
+      'django.contrib.auth',
+      'django.contrib.contenttypes',
+      'django.contrib.sessions',
+      'django.contrib.messages',
+      'django.contrib.staticfiles',
+      'core',
+      'blog',
+  ]
+
+    Tambien se debe actualizar en 'urls' de 'core' y las 'urls' de 'blog'.
+  1. agregar path a las 'urls.py' de 'core':
+      path('blog', include('rutaApp.modulo', namespace='llamadaATemplate'))
+  
+  2. agregar 'urls.py' a 'blog':
+      Todo archivo url debe ser dclarado con: 'url_patterns=[]' para acceder 
+    a todas las vistas de 'blog'
+
+    Ahora se deben crear las vistas de 'blog' donde se van a enlistar todos 
+los POST que existen:
+
+- 'views.py' de 'blog':
+  from django.shortcuts import render
+  from django.views.generic import View
+
+
+  # Create your views here.
+  class BlogListView(View):
+      def get(self, request, *args, **kwargs):
+          context = {
+              
+          }
+          return render(request, 'blog_list.html', context)
+
+    Una vez creado el modulo 'views' se debe agregar a la lista de urls
+de 'blog':
+  urlpatterns = [
+      path('', BlogListView.as_view(), name='home')
+  ]
+
+    En el html 'index' se agregara la url para dirigirnos a la view de blog.
+  hola, visita mi blog <a href="{% url "blog:home" %}"> Blog aqui</a>
+
+  href="{% url "blog:home" %}" -> url "nombAppSegunUrls:vistaAMostrar"
+    El nameSpace origen, es el que se encuentra en la ruta path de 'urls' de
+  'core', quien a su vez, esta redirigido a las 'urls' de 'blog' que contiene
+  una vista llamada 'home'
+
+
+
+
+#########################################################################
+#                                                                       #
+#                         MODELOS VISTA ADMIN                           #
+#                                                                       #
+######################################################################### 
+
+    SON LOS QUE NOS PERMITE INTERACTUAR CON LA BASE DE DATOS. ES LA INFORMACION 
+    DE LA BASE DE DATOS.
+   Se empieza trabajando con el modulo 'models.py' de 'blog' creando la clase:
+  
+  Class Post(models.Model):
+    title = models.CharField(max_length=256)
+    content = models.TextField()
+
+    Las migraciones son las modificaciones que se realizan al modulo 
+'models.py'
+    Se procede a migrar informacion. Se limpia la base de datos de migraciones
+que hay en Blog. En la consola se ejecuta:
+  1. python manage.py makemigrations blog
+  2. python manage.py migrate
+    
+    Una vez realizada la migracion, ya se puede crear POST.
+    En 'blog' se trabaja con el modulo 'admin' para crear las vistas y 
+registrar:
+
+- 'admin.py':
+  from django.contrib import admin
+  from .models import Post
+
+  admin.site.register(Post)
+
+
+  Se sigue cargando datos desde el admin web.
+  Para mejorar la forma en que se visualizan los datos que se almacenan en la
+bd se modifica el modulo 'models' para que se guarden segun el titulo:
+
+- 'models.py' blog:
+  def __str__(self):
+      return self.title
+
+
+#########################################################################
+#                                                                       #
+#                         CREACION de MODELOS                           #
+#                                                                       #
+#                   models -> forms -> views -> url                     #
+######################################################################### 
+
+    Se trabajara con fomrularios. Se busca crear modelos a traves de la vista
+    Hay que crear un articulo de la bd.
+    
+    Para poder interactuar entre los modelos y las vistas hay que crear un 
+nuevo modulo llamado 'forms.py' que va a interactuar con los metodos, en este
+caso el Post.
+    Una vez creado el modulo 'forms.py' se busca traer los modelos que se 
+quieren manipular. Se empieza con el modelo Post.
+
+- 'forms.py' de blog:
+  from django import forms
+  from .models import Post
+
+
+  class PostCreateForm(form.ModelForm):
+      class meta:
+          # se especifica el modelo que se quiere manipular para este formulario
+          model = Post
+
+          # indico los campos que quiero mostrar
+          # son los declarados en 'blog/models.py'
+          fields = ('title', 'content')
+
+    Una vez declarado el modelo de creacion de formulario, tengo que crear la
+vista para dicho modelo. Para eso trabajo sobre modulo 'views.py' de blog.
+    Se crea la clase del modelo que sera la plantilla de la vista.
+
+- 'views.py' de blog:
+  class BlogCreateView(View):
+      def get(self, request, *args, **kwargs):
+          context = {
+
+          }
+          return render(request, 'blog_create.html', context)
+      
+      def post(self, request, *args, **kwargs):
+          context = {
+              
+          }
+          return render(request, 'blog_create.html', context)
+
+    Terminado de crear el modelo de la vista, hay que agregar la ruta al path
+de las urls del modulo 'urls.py' de blog. En el que se crea el endpoint create 
+que hereda de /blog/create.
+
+- 'urls.py' de blog:
+  urlpatterns = [
+      path('', BlogListView.as_view(), name='home'),
+      path('create/', BlogCreateView.as_view(), name="create")
+  ]
+
+    Ahora hay que crear la conexion entre la ruta al modelo que crea el 
+formulario y la vista. Esto se realiza desde la plantilla 'blog_lista.html'
+    Hay que agregar el formulario al modelo que crea la vista de 'create'.
+
+- 'views.py' de blog:
+    def post(self, request, *args, **kwargs):
+        if request.method =="POST":
+            form = PostCreateForm(request.POST)
+            if form.is_valid():
+                title = form.cleaned_data.get('title')
+                content = form.cleaned_data.get('content')
+
+                p, created = Post.objects.get_or_create(
+                    title=title, 
+                    content=content
+                )
+
+                p.save()
+
+                return redirect('blog:home')
+        context = {
+        }
+        return render(request, 'blog_create.html', context)
+
+
+
+
+#########################################################################
+#                                                                       #
+#                 ENLISTAR OBJETOS de una BASE de DATOS                 #
+#                                                                       #
+#########################################################################
+    
+    En el modulo 'views.py' de blog, empiezo a trabajar con la clase
+'BlogListView' para llamar a los objetos POST que existen en la bd:
+- 'views.py' de blog:
+  class BlogListView(View):
+      def get(self, request, *args, **kwargs):
+          posts = Post.objects.all()
+
+          context = {
+              'posts': posts
+          }
+          return render(request, 'blog_list.html', context)
+
+    Una vez terminado me dirijo al template 'blog_list.html':
+- 'blog_list.html' de blog:
+  blog list 
+  <br>
+  {% for post in posts %}
+
+      {{post.title}}
+
+  {% endfor %}
+  <br>
+  <!-- url 'appOrigen:endpoitEnUrls'       -->
+  <a href="{% url 'blog:create' %}">Create</a>
+
+    Configurado el template, paso a crear el modelo de vista que va a mostrar
+la informacion extraida de la base de datos. Se crea nueva clase en modulo 
+'views':
+- 'views.py' de blog:
+  class BlogDetailView(View):
+      def get(self, request, *args, **kwargs):
+          context = {
+
+          }
+          return render(request, 'blog_detail.html', context)
+
+    Configurado la nueva vista, cargo en el path de endpoints la nueva ruta. 
+Para eso tengo que actualizar el modulo 'urls' de 'blog'. Se debe importar
+la clase de la vista a integrar, en este caso es la vista detalle para los
+objetos de la base de datos:
+- 'urls.py' de blog:
+  urlpatterns = [
+      path('', BlogListView.as_view(), name='home'),
+      path('create/', BlogCreateView.as_view(), name="create"),
+      path('<int:pk>', BlogDetailView.as_view(), name="detail")
+  ]
+
+  <int:pk> -> es el id unico de cada post
+
+    Se debe configurar un enlace a cada post y recibir el id de cada objeto.
+Se trabaja sobre el template 'blog_list':
+- 'blog_list.html' de blog:
+  {% for post in posts %}
+
+  <a href="{% url "blog:detail" post.id %}"> {{post.title}} </a>
+
+  {% endfor %}
+
+    Se configura el template 'blog_detail.html'.
+
+
+#########################################################################
+#                                                                       #
+#                         ACTUALIZAR VISTA                              #
+#                                                                       #
+#########################################################################
+
+
+
+#########################################################################
+#                                                                       #
+#                            BORRAR VISTA                               #
+#                                                                       #
+#########################################################################
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
